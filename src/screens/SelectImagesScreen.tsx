@@ -5,11 +5,16 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from '@expo/vector-icons';
+
 
 const { width } = Dimensions.get('window');
 
 export default function SelectImagesScreen() {
-  const [images, setImages] = useState<string[]>([]);
+  const [mainImage, setMainImage] = useState<string | null>(null);
+  const [smallImageOne, setSmallImageOne] = useState<string | null>(null);
+  const [smallImageTwo, setSmallImageTwo] = useState<string | null>(null);
+  const [smallImageThree, setSmallImageThree] = useState<string | null>(null);
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const navigation = useNavigation();
 
@@ -25,17 +30,33 @@ export default function SelectImagesScreen() {
   );
 
   // Selecionar imagens do imóvel
-  const pickImage = async () => {
+  const pickImage = async (target: "main" | "one" | "two" | "three") => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
       allowsMultipleSelection: true,
-      selectionLimit: 4,
+      selectionLimit: 1,
     });
 
     if (!result.canceled) {
-      setImages(result.assets.map((asset) => asset.uri));
+      const uri = result.assets[0].uri;
+
+      switch (target) {
+        case "main":
+          setMainImage(uri);
+          break;
+        case "one":
+          setSmallImageOne(uri);
+          break;
+        case "two":
+          setSmallImageTwo(uri);
+          break;
+        case "three":
+          setSmallImageThree(uri);
+          break;
+      }
+
     }
-  };
+  }
 
   // Navegar para a tela de edição de perfil
   const goToEditProfile = () => {
@@ -45,12 +66,13 @@ export default function SelectImagesScreen() {
 
   // Navegar para a tela de montagem do template
   const goToSecondScreen = () => {
-    navigation.navigate("RenderTemplate", { images, profilePic });
+    const imageArray = [mainImage, smallImageOne, smallImageTwo, smallImageThree];
+    console.log(`Número de imagens na lista -------------------- ${imageArray.length}`)
+    navigation.navigate("RenderTemplate", {images: imageArray, profilePic });
   };
 
   return (
     <View style={styles.container}>
-      {/* Botão no canto superior direito com a foto de perfil */}
       <TouchableOpacity onPress={goToEditProfile} style={styles.profileButton}>
         {profilePic ? (
           <Image source={{ uri: profilePic }} style={styles.profilePic} />
@@ -59,9 +81,50 @@ export default function SelectImagesScreen() {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={pickImage} style={styles.button}>
-        <Text style={styles.buttonText}>Selecionar Fotos do Imóvel</Text>
+      <TouchableOpacity onPress={() => pickImage("main")} style={styles.mainImageContainer}>
+      {mainImage ? (
+            <Image source={{ uri: mainImage }} style={styles.mainImage} />
+          ) : (
+            <View style={[styles.mainImage, styles.placeholder]}>
+              <Ionicons name="camera" size={32} color="#aaa" />
+            </View>
+          )}
       </TouchableOpacity>
+
+      <View style={styles.row}>
+
+        <TouchableOpacity onPress={() => pickImage("one")}>
+          {smallImageOne ? (
+            <Image source={{ uri: smallImageOne }} style={styles.smallImage} />
+          ) : (
+            <View style={[styles.smallImage, styles.placeholder]}>
+              <Ionicons name="camera" size={32} color="#aaa" />
+            </View>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => pickImage("two")}>
+          {smallImageTwo ? (
+            <Image source={{ uri: smallImageTwo }} style={styles.smallImage} />
+          ) : (
+            <View style={[styles.smallImage, styles.placeholder]}>
+              <Ionicons name="camera" size={32} color="#aaa" />
+            </View>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => pickImage("three")}>
+          {smallImageThree ? (
+            <Image source={{ uri: smallImageThree }} style={styles.smallImage} />
+          ) : (
+            <View style={[styles.smallImage, styles.placeholder]}>
+              <Ionicons name="camera" size={32} color="#aaa" />
+            </View>
+          )}
+        </TouchableOpacity>
+        
+
+      </View>
 
       <TouchableOpacity onPress={goToSecondScreen} style={styles.buttonGenerate}>
         <Text style={styles.buttonText}>Gerar template</Text>
@@ -91,10 +154,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     overflow: "hidden",
   },
-  profilePic: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+  mainImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
     resizeMode: "cover",
   },
   profileText: {
@@ -117,9 +180,41 @@ const styles = StyleSheet.create({
   buttonGenerate: {
     margin: 10,
     padding: 10,
-    backgroundColor: "#008000",
+    backgroundColor: "#192847",
     borderRadius: 5,
     height: 44,
     width: width * 0.9,
   },
+  mainImageContainer: {
+    width: "100%",
+    height: 200,
+    backgroundColor: "#e0e0e0",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    borderRadius: 10
+  },
+  profilePic: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    resizeMode: "cover",
+  },
+  row: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  smallImage: {
+    width: 100,
+    height: 100,
+    margin: 5,
+    resizeMode: "cover",
+    borderRadius: 10
+  },
+  placeholder: {
+    backgroundColor: "#ddd",
+    justifyContent: "center",
+    alignItems: "center",
+  }
+
 });

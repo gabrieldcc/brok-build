@@ -13,16 +13,19 @@ export default function ProfileScreen() {
     const [name, setName] = useState("");
     const [creci, setCreci] = useState("");
     const [profilePic, setProfilePic] = useState("");
+    const [cellphone, setCellphone] = useState("");
 
     useEffect(() => {
         const loadUserData = async () => {
             const savedName = await AsyncStorage.getItem("nome");
             const savedCreci = await AsyncStorage.getItem("creci");
             const savedProfilePic = await AsyncStorage.getItem("foto");
+            const savedCellphone = await AsyncStorage.getItem("celular");
 
             setName(savedName)
             setCreci(savedCreci)
             setProfilePic(savedProfilePic)
+            setCellphone(savedCellphone)
         };
 
         loadUserData();
@@ -45,6 +48,7 @@ export default function ProfileScreen() {
         const savedName = await AsyncStorage.setItem("nome", name);
         const savedCreci = await AsyncStorage.setItem("creci", creci);
         const savedProfilePic = await AsyncStorage.setItem("profilePic", profilePic);
+        const savedCellphone = await AsyncStorage.setItem("celular", profilePic);
 
         Alert.alert("Dados atualizados com sucesso!", `Nome: ${name}\nCRECI: ${creci}`, [
             {
@@ -56,7 +60,7 @@ export default function ProfileScreen() {
         ]);
     }
 
-    // // Simular logout
+    // //  logout
     const handleLogout = () => {
         cleanProfile()
         navigation.reset({
@@ -70,6 +74,7 @@ export default function ProfileScreen() {
         await AsyncStorage.removeItem("nome");
         await AsyncStorage.removeItem("creci");
         await AsyncStorage.removeItem("foto");
+        await AsyncStorage.removeItem("celular");
     };
 
     return (
@@ -83,12 +88,6 @@ export default function ProfileScreen() {
                     )}
                 </TouchableOpacity>
 
-                {/* <TextInput
-          style={styles.input}
-          placeholder="Nome"
-          value={name}
-          onChangeText={setName}
-        /> */}
                 <View style={styles.inputContainer}>
                     <Ionicons name="person-outline" size={20} color="#999" style={styles.icon} />
                     <TextInput
@@ -110,13 +109,16 @@ export default function ProfileScreen() {
                     />
                 </View>
 
-                {/* <TextInput
-                    style={styles.input}
-                    placeholder="CRECI"
-                    value={creci}
-                    onChangeText={setCreci}
-                    keyboardType="numeric"
-                /> */}
+                <View style={styles.inputContainer}>
+                    <Ionicons name="call-outline" size={20} color="#999" style={styles.icon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Celular"
+                        keyboardType="numeric"
+                        value={cellphone}
+                        onChangeText={setCellphone}
+                    />
+                </View>
 
                 <TouchableOpacity onPress={handleSaveProfile} style={styles.button}>
                     <Text style={styles.buttonText}>Salvar</Text>

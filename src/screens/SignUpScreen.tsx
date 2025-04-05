@@ -13,6 +13,7 @@ export default function SignUpScreen() {
 
     const [nome, setNome] = useState<string>("");
     const [creci, setCreci] = useState<string>("");
+    const [celular, setCelular] = useState<string>("");
     const [foto, setFoto] = useState<string | null>(null);
     const navigation = useNavigation();
 
@@ -22,6 +23,7 @@ export default function SignUpScreen() {
             const savedNome = await AsyncStorage.getItem("nome");
             const savedCreci = await AsyncStorage.getItem("creci");
             const savedFoto = await AsyncStorage.getItem("foto");
+            const savedCelular = await AsyncStorage.getItem("celular");
 
             if (savedNome && savedCreci && savedFoto) {
                 // Se já houver um cadastro, redireciona para SelectImages
@@ -55,6 +57,7 @@ export default function SignUpScreen() {
         await AsyncStorage.setItem("nome", nome);
         await AsyncStorage.setItem("creci", creci);
         await AsyncStorage.setItem("foto", foto);
+        await AsyncStorage.setItem("celular", celular);
 
         Alert.alert("Cadastro realizado", `Nome: ${nome}\nCRECI: ${creci}`, [
             {
@@ -105,6 +108,17 @@ export default function SignUpScreen() {
                         keyboardType="numeric"
                         value={creci}
                         onChangeText={setCreci}
+                    />
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <Ionicons name="call-outline" size={20} color="#999" style={styles.icon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Celular"
+                        keyboardType="numeric"
+                        value={celular}
+                        onChangeText={setCelular}
                     />
                 </View>
 
@@ -219,12 +233,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginVertical: 10,
         backgroundColor: "#fff",
-      },
-      icon: {
+    },
+    icon: {
         marginRight: 8,
-      },
-      input: {
+    },
+    input: {
         flex: 1,
         paddingVertical: 10,
-      },
+    },
 });
