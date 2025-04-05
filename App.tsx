@@ -1,20 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { RootStackParamList } from './src/types/types';
+import SignUpScreen from './src/screens/SignUpScreen';
+import SelectImagesScreen from './src/screens/SelectImagesScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import RenderTemplateScreen from './src/screens/RenderTemplateScreen';
+// import { ProfileProvider } from './src/context/ProfileContext';
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="SignUpScreen" screenOptions={{ headerBackTitle: ""}}>
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerShown: false }} />
+         <Stack.Screen name="SelectImages" component={SelectImagesScreen} options={{ headerShown: false }}/>
+         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerTitle: "Editar Perfil" }}/>
+         <Stack.Screen name="RenderTemplate" component={RenderTemplateScreen} options={{ headerTitle: "" }} />
+
+        {
+        /*
+         */}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
