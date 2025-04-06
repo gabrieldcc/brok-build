@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
-import { View, Image, StyleSheet, InteractionManager, Dimensions, Text } from "react-native";
+import { View, Image, StyleSheet, InteractionManager, Dimensions, Text, ActivityIndicator } from "react-native";
 import { captureScreen } from "react-native-view-shot";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
@@ -20,11 +20,12 @@ export default function RenderTemplateScreen({ navigation }: any) {
     const { images, profilePic } = route.params;
     const [creci, setCreci] = useState("")
     const [name, setName] = useState("")
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         handleProfileInfo()
         hideNavigationBar()
-        //handleTemplate()
+        handleTemplate()
     }, [images, profilePic, navigation]);
 
     const hideNavigationBar = () => {
@@ -40,9 +41,11 @@ export default function RenderTemplateScreen({ navigation }: any) {
     }
 
     const handleTemplate = () => {
+        setIsLoading(true)
         InteractionManager.runAfterInteractions(async () => {
             if (viewRef.current) {
                 try {
+                    await delay(500);
                     const uri = await captureScreenAfterRender();
                     if (uri) {
                         const fileUri = await saveCapturedImage(uri);
@@ -50,9 +53,11 @@ export default function RenderTemplateScreen({ navigation }: any) {
                     }
                 } catch (error) {
                     handleCaptureError(error);
+                } finally {
+                    setIsLoading(false);
+                    restoreNavigationBar();
                 }
             }
-            restoreNavigationBar();
         });
     };
 
@@ -98,12 +103,22 @@ export default function RenderTemplateScreen({ navigation }: any) {
         navigation.setOptions({ headerShown: true });
     };
 
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+
     return (
+
         <View style={styles.container}>
 
-            <View ref={viewRef} style={styles.captureArea}>
+            {isLoading && (
+                <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color="#fff" />
+                    <Text style={styles.loadingText}>Gerando imagem...</Text>
+                </View>
+            )}
 
-                <View style={{ flexDirection: 'row' }}>
+            <View ref={viewRef} style={styles.captureArea}>
+                <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                     <Image source={logoImage} style={styles.logoImage} />
                     <Image source={remaxNameImage} style={styles.remaxNameImage} />
                 </View>
@@ -137,6 +152,7 @@ export default function RenderTemplateScreen({ navigation }: any) {
                 </View>
             </View>
         </View >
+
     );
 }
 
@@ -160,7 +176,12 @@ const styles = StyleSheet.create({
         height: height * 0.35,
         resizeMode: "cover",
         marginTop: 40,
-        borderRadius: 10
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 8,
     },
     logoImage: {
         resizeMode: "contain",
@@ -179,14 +200,19 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: "row",
-        marginTop: 4,
+        marginTop: 4
     },
     smallImage: {
         width: 100,
         height: 100,
         margin: 5,
         resizeMode: "cover",
-        borderRadius: 10
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 8,
     },
     profileImage: {
         width: 100,
@@ -194,6 +220,11 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginTop: 10,
         resizeMode: "cover",
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 8,
+        borderWidth: 2,
+        borderColor: '#fff',
     },
     brokerContainer: {
         position: 'absolute',
@@ -204,24 +235,21 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     brokerName: {
-        paddingLeft: 4,
-        fontSize: 16,
+        fontSize: 18,
+        fontWeight: '600',
         color: '#fff',
-        fontWeight: 'bold',
-        fontFamily: "Arial"
     },
     brokerCreci: {
-        paddingLeft: 4,
-        fontSize: 16,
-        color: '#fff',
-        fontFamily: "Arial"
+        fontSize: 14,
+        color: '#ccc',
+        marginTop: 4,
     },
     brokerCellphone: {
-        paddingLeft: 6,
-        fontSize: 16,
-        color: '#fff',
-        fontFamily: "Arial"
+        fontSize: 14,
+        color: '#ccc',
+        marginTop: 4,
     },
+
     brokerInfoContainer: {
         flexDirection: 'column',
         padding: 10,
@@ -229,4 +257,21 @@ const styles = StyleSheet.create({
     icon: {
         marginTop: 8,
     },
+    loadingOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10,
+    },
+    loadingText: {
+        marginTop: 10,
+        color: '#fff',
+        fontSize: 16,
+    }
+
 });

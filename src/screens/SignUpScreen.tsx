@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, Image, StyleSheet, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, Dimensions } from "react-native";
+import { ScrollView, KeyboardAvoidingView, Platform, View, Text, TextInput, Button, Image, StyleSheet, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, Dimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,9 +16,21 @@ export default function SignUpScreen() {
     const [celular, setCelular] = useState<string>("");
     const [foto, setFoto] = useState<string | null>(null);
     const navigation = useNavigation();
+    const [isFormValid, setIsFormValid] = useState(false);
+
 
     // Carregar os dados do AsyncStorage ao iniciar
     useEffect(() => {
+
+        const isValid =
+        nome.trim() !== "" &&
+        creci.trim() !== "" &&
+        celular.trim() !== "" &&
+        foto !== null
+        console.log(`foto----${foto}`)
+
+        setIsFormValid(isValid);
+
         const loadUserData = async () => {
             const savedNome = await AsyncStorage.getItem("nome");
             const savedCreci = await AsyncStorage.getItem("creci");
@@ -27,12 +39,12 @@ export default function SignUpScreen() {
 
             if (savedNome && savedCreci && savedFoto) {
                 // Se já houver um cadastro, redireciona para SelectImages
-                //navigation.replace("SelectImages");
+                navigation.replace("SelectImages");
             }
         };
 
         loadUserData();
-    }, []);
+    }, [nome, creci, celular, foto]);
 
     const handlePickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -73,62 +85,87 @@ export default function SignUpScreen() {
     }
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <View style={styles.container}>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={{ flex: 1 }}>
+                    <ScrollView
+                        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} 
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        <View style={styles.container}>
+                            <Text style={styles.title}>Cadastro</Text>
+                            <Text style={{ color: "#666", fontSize: 16, marginBottom: 20 }}>
+                                Insira seus dados para começar
+                            </Text>
 
-                <Text style={styles.title}>Cadastro</Text>
-                <Text style={{ color: "#666", fontSize: 16, marginBottom: 20 }}>
-                    Insira seus dados para começar
-                </Text>
+                            <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
+                                {foto ? (
+                                    <Image source={{ uri: foto }} style={styles.imagePreview} />
+                                ) : (
+                                    <Ionicons name="camera" size={24} color="#fff" />
+                                )}
+                            </TouchableOpacity>
 
-                <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="person-outline" size={20} color="#999" style={styles.icon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Nome"
+                                    value={nome}
+                                    onChangeText={setNome}
+                                />
+                            </View>
 
-                    {foto ? (
-                        <Image source={{ uri: foto }} style={styles.imagePreview} />
-                    ) : (
-                        <Ionicons name="camera" size={24} color="#fff" />
-                    )}
-                </TouchableOpacity>
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="document-text-outline" size={20} color="#999" style={styles.icon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="CRECI"
+                                    keyboardType="numeric"
+                                    value={creci}
+                                    onChangeText={setCreci}
+                                />
+                            </View>
 
-                <View style={styles.inputContainer}>
-                    <Ionicons name="person-outline" size={20} color="#999" style={styles.icon} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Nome"
-                        value={nome}
-                        onChangeText={setNome}
-                    />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="call-outline" size={20} color="#999" style={styles.icon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Celular"
+                                    keyboardType="numeric"
+                                    value={celular}
+                                    onChangeText={setCelular}
+                                />
+                            </View>
+                        </View>
+                    </ScrollView>
+
+                    <View >
+                        <TouchableOpacity
+                            onPress={handleSubmit}
+                            style={[
+                                styles.button,
+                                { backgroundColor: isFormValid ? "#192847" : "#999" },
+                            ]}
+                            disabled={!isFormValid}
+                        >
+                            <Text style={styles.buttonText}>Cadastrar</Text>
+                        </TouchableOpacity>
+
+
+                    </View>
                 </View>
-
-                <View style={styles.inputContainer}>
-                    <Ionicons name="document-text-outline" size={20} color="#999" style={styles.icon} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="CRECI"
-                        keyboardType="numeric"
-                        value={creci}
-                        onChangeText={setCreci}
-                    />
-                </View>
-
-                <View style={styles.inputContainer}>
-                    <Ionicons name="call-outline" size={20} color="#999" style={styles.icon} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Celular"
-                        keyboardType="numeric"
-                        value={celular}
-                        onChangeText={setCelular}
-                    />
-                </View>
-
-                <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-                    <Text style={styles.buttonText}>Cadastrar</Text>
-                </TouchableOpacity>
-
-            </View>
-        </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
+
+
+
+
 }
 
 const styles = StyleSheet.create({
@@ -145,14 +182,6 @@ const styles = StyleSheet.create({
         color: "#192847",
         marginBottom: 10,
         textAlign: "center",
-    },
-    input: {
-        width: "100%",
-        padding: 10,
-        marginVertical: 10,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 5,
     },
     imagePreview: {
         width: 150,
@@ -186,44 +215,6 @@ const styles = StyleSheet.create({
         fontSize: 36,
         color: "#888",
     },
-    imagePicker: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        backgroundColor: "#e0e0e0",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    imagePickerText: {
-        fontSize: 36,
-        color: "#888",
-    },
-    imagePicker: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        backgroundColor: "#e0e0e0",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    imagePickerText: {
-        fontSize: 36,
-        color: "#888",
-    },
-    input: {
-        width: "100%",
-        padding: 12,
-        marginVertical: 8,
-        borderRadius: 10,
-        backgroundColor: "#fff",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -240,5 +231,9 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         paddingVertical: 10,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: "center",
     },
 });
