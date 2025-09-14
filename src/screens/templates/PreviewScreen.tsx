@@ -10,6 +10,7 @@ const postHeight = width * 5 / 4;
 export default function PreviewScreen({ navigation }: any) {
     const route = useRoute();
     const [mainImage, setMainImage] = useState<string | null>(null);
+    const { formData = {} } = route.params || {};
 
     const pickImage = async () => {
         console.log('tapped')
@@ -24,6 +25,9 @@ export default function PreviewScreen({ navigation }: any) {
             setMainImage(uri);
         }
     }
+
+    console.log("formData --------", JSON.stringify(formData, null, 2));
+
 
     return (
         <View style={styles.container}>
@@ -40,11 +44,14 @@ export default function PreviewScreen({ navigation }: any) {
                 ></ImageBackground>
             </TouchableOpacity>
             <View style={styles.rectangle}>
-                {Array.from({ length: 14 }).map((_, index) => (
-                    <Text key={index} style={styles.textField}>
-                        Campo {index + 1}
-                    </Text>
-                ))}
+                {Object.entries(formData)
+                    .filter(([_, value]) => value !== null && value !== "")
+                    .map(([key, value], index) => (
+                        <Text key={index} style={styles.textField}>
+                            {key}: {value}
+                        </Text>
+                    ))
+                }
             </View>
         </View>
     );

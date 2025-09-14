@@ -26,8 +26,10 @@ export default function PropertyFormScreen({navigation}) {
       diasVenda,
       textoCustomizado,
     };
-    Alert.alert("Dados do formulário", JSON.stringify(formData, null, 2));
-    navigation.navigate('PreviewScreen')
+    // Alert.alert("Dados do formulário", JSON.stringify(formData, null, 2));
+    navigation.navigate('PreviewScreen', { formData })
+        console.log("formData formulario--------", JSON.stringify(formData, null, 2));
+
   };
 
   return (
