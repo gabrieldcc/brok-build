@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation, } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from '@expo/vector-icons';
+import { MaskedTextInput } from "react-native-mask-text";
 
 
 const { width } = Dimensions.get('window');
@@ -15,6 +16,7 @@ export default function SignUpScreen() {
     const [creci, setCreci] = useState<string>("");
     const [celular, setCelular] = useState<string>("");
     const [foto, setFoto] = useState<string | null>(null);
+    const [logo, setLogo] = useState<string | null>(null);
     const navigation = useNavigation();
     const [isFormValid, setIsFormValid] = useState(false);
 
@@ -23,11 +25,10 @@ export default function SignUpScreen() {
     useEffect(() => {
 
         const isValid =
-        nome.trim() !== "" &&
-        creci.trim() !== "" &&
-        celular.trim() !== "" &&
-        foto !== null
-        console.log(`foto----${foto}`)
+            nome.trim() !== "" &&
+            creci.trim() !== "" &&
+            celular.trim() !== "" &&
+            foto !== null
 
         setIsFormValid(isValid);
 
@@ -38,8 +39,8 @@ export default function SignUpScreen() {
             const savedCelular = await AsyncStorage.getItem("celular");
 
             if (savedNome && savedCreci && savedFoto) {
-                // Se já houver um cadastro, redireciona para SelectImages
-                navigation.replace("SelectImages");
+                // Se já houver um cadastro, redireciona para ChooseTemplate
+                navigation.replace("ChooseTemplate");
             }
         };
 
@@ -59,6 +60,19 @@ export default function SignUpScreen() {
         }
     };
 
+    const handlePickLogoImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsMultipleSelection: false,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setLogo(result.assets[0].uri);
+        }
+    };
+
     const handleSubmit = async () => {
         if (!nome || !creci || !foto) {
             Alert.alert("Erro ao efetuar cadastro", "Por favor, preencha todos os campos");
@@ -70,6 +84,9 @@ export default function SignUpScreen() {
         await AsyncStorage.setItem("creci", creci);
         await AsyncStorage.setItem("foto", foto);
         await AsyncStorage.setItem("celular", celular);
+        if (logo) {
+            await AsyncStorage.setItem("logo", logo);
+        }
 
         Alert.alert("Cadastro realizado", `Nome: ${nome}\nCRECI: ${creci}`, [
             {
@@ -81,7 +98,7 @@ export default function SignUpScreen() {
 
     const handleSignUpSuccess = () => {
         console.log("ok pressed")
-        navigation.navigate("SelectImages");
+        navigation.navigate("ChooseTemplate");
     }
 
     return (
@@ -93,7 +110,7 @@ export default function SignUpScreen() {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ flex: 1 }}>
                     <ScrollView
-                        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} 
+                        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
                         keyboardShouldPersistTaps="handled"
                     >
                         <View style={styles.container}>
@@ -102,13 +119,24 @@ export default function SignUpScreen() {
                                 Insira seus dados para começar
                             </Text>
 
-                            <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
-                                {foto ? (
-                                    <Image source={{ uri: foto }} style={styles.imagePreview} />
-                                ) : (
-                                    <Ionicons name="camera" size={24} color="#fff" />
-                                )}
-                            </TouchableOpacity>
+                              <View style={styles.imageRow}>
+                                <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
+                                    {foto ? (
+                                        <Image source={{ uri: foto }} style={styles.imagePreview} />
+                                    ) : (
+                                        // <Ionicons name="camera" size={24} color="#fff" />
+                                        <Text style={styles.placeholderText}>Perfil</Text>
+                                    )}
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={handlePickLogoImage} style={styles.imagePicker}>
+                                    {logo ? (
+                                        <Image source={{ uri: logo }} style={styles.imagePreview} />
+                                    ) : (
+                                        <Text style={styles.placeholderText}>Sua logo</Text>
+                                    )}
+                                </TouchableOpacity>
+                            </View>
 
                             <View style={styles.inputContainer}>
                                 <Ionicons name="person-outline" size={20} color="#999" style={styles.icon} />
@@ -133,10 +161,11 @@ export default function SignUpScreen() {
 
                             <View style={styles.inputContainer}>
                                 <Ionicons name="call-outline" size={20} color="#999" style={styles.icon} />
-                                <TextInput
+                                <MaskedTextInput
                                     style={styles.input}
                                     placeholder="Celular"
                                     keyboardType="numeric"
+                                    mask="(99) 99999-9999"
                                     value={celular}
                                     onChangeText={setCelular}
                                 />
@@ -236,4 +265,30 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: "center",
     },
+    imageRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "80%",
+        paddingHorizontal: 20,
+    },
+    imagePicker: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: "#e0e0e0",
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    imagePreview: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+    },
+    placeholderText: {
+        fontSize: 14,
+        color: "#555",
+        textAlign: "center",
+    },
+
 });

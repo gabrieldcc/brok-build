@@ -48,7 +48,7 @@ export default function ProfileScreen() {
         const savedName = await AsyncStorage.setItem("nome", name);
         const savedCreci = await AsyncStorage.setItem("creci", creci);
         const savedProfilePic = await AsyncStorage.setItem("profilePic", profilePic);
-        const savedCellphone = await AsyncStorage.setItem("celular", profilePic);
+        const savedCellphone = await AsyncStorage.setItem("celular", cellphone);
 
         Alert.alert("Dados atualizados com sucesso!", `Nome: ${name}\nCRECI: ${creci}`, [
             {

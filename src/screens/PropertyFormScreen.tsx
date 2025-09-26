@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
+import { MaskedTextInput } from "react-native-mask-text";
+import MaskInput, { Masks } from 'react-native-mask-input';
 
-export default function PropertyFormScreen({navigation}) {
+
+export default function PropertyFormScreen({ navigation }) {
   const [type, setType] = useState<"venda" | "aluguel" | null>(null);
   const [bairro, setBairro] = useState("");
   const [valor, setValor] = useState("");
@@ -12,6 +16,11 @@ export default function PropertyFormScreen({navigation}) {
   const [areaGourmet, setAreaGourmet] = useState<"sim" | "nao" | null>(null);
   const [diasVenda, setDiasVenda] = useState("");
   const [textoCustomizado, setTextoCustomizado] = useState("");
+
+  const route = useRoute();
+  // const navigation = useNavigation();
+  const { templateId } = route.params ?? {};
+  console.log(`templateID ----> ${templateId}`)
 
   const handleSubmit = () => {
     const formData = {
@@ -27,8 +36,29 @@ export default function PropertyFormScreen({navigation}) {
       textoCustomizado,
     };
     // Alert.alert("Dados do formulário", JSON.stringify(formData, null, 2));
-    navigation.navigate('PreviewScreen', { formData })
-        console.log("formData formulario--------", JSON.stringify(formData, null, 2));
+
+    switch (templateId) {
+      case '1':
+        navigation.navigate('PreviewScreen', { formData })
+        break;
+      case '2':
+        navigation.navigate('SoldOutDays', { formData })
+        break;
+      case '3':
+        navigation.navigate('Quadrant', { formData })
+        break;
+      case '4':
+        navigation.navigate('QuadrantSquare', { formData })
+        break;
+      case '5':
+        navigation.navigate('ThreeMainImage', { formData })
+        break;
+      default:
+        navigation.navigate('TemplateDefaultScreen');
+    }
+
+    // navigation.navigate('PreviewScreen', { formData })
+    // console.log("formData formulario--------", JSON.stringify(formData, null, 2));
 
   };
 
@@ -59,12 +89,19 @@ export default function PropertyFormScreen({navigation}) {
       />
 
       <Text style={styles.label}>Valor do imóvel</Text>
-      <TextInput
+      <MaskInput
         style={styles.input}
+        keyboardType="numeric"
+        mask={Masks.BRL_CURRENCY}            
+        // options={{
+        //   prefix: 'R$ ',              
+        //   decimalSeparator: ',',      
+        //   groupSeparator: '.',       
+        //   precision: 2,               
+        // }}
         value={valor}
         onChangeText={setValor}
         placeholder="Digite o valor"
-        keyboardType="numeric"
       />
 
       <Text style={styles.label}>Quantidade de quartos</Text>
@@ -138,7 +175,7 @@ export default function PropertyFormScreen({navigation}) {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Gerar Arte</Text>
+        <Text style={styles.buttonText}>Avançar</Text>
       </TouchableOpacity>
     </ScrollView>
   );
