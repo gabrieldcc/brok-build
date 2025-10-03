@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { captureScreen } from "react-native-view-shot";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get('window');
 const postHeight = width * 5 / 4;
@@ -32,6 +33,15 @@ export default function PreviewScreen({ navigation }: any) {
     }, []);
 
     useEffect(() => {
+
+        Toast.show({
+            type: 'info',
+            text1: 'Dica 👇',
+            text2: 'Toque na tela para escolher uma foto da galeria',
+            position: 'bottom',
+            visibilityTime: 6000,
+        });
+
         const loadUserData = async () => {
             const savedNome = await AsyncStorage.getItem("nome");
             const savedCreci = await AsyncStorage.getItem("creci");
@@ -285,12 +295,12 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     userCreci: {
-        fontSize: 12,
+        fontSize: 10,
         fontWeight: '400',
         color: '#fff',
     },
     userPhone: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '400',
         color: '#fff',
     },
@@ -310,11 +320,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     logoImageBase: {
-        width: 150,           // tamanho da logo
-        height: 80,
+        width: 120,           // tamanho da logo
+        height: 60,
         marginTop: 8,        // espaço acima da logo
         alignSelf: 'center', // ou 'center' se quiser centralizar
-        borderRadius: 8
+        borderRadius: 2
     }
 
 });

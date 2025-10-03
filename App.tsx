@@ -13,13 +13,55 @@ import SoldOutDaysScreen from './src/screens/templates/SoldOutDaysScreen';
 import QuadrantScreen from './src/screens/templates/QuadrantScreen';
 import QuadrantSquareScreen from './src/screens/templates/QuadrantSquareScreen';
 import ThreeMainImageScreen from './src/screens/templates/ThreeMainImageScreen';
+import Toast from 'react-native-toast-message';
 // import { ProfileProvider } from './src/context/ProfileContext';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
 
+// export default function App() {
+//   return (
+//     <>
+//       <NavigationContainer>
+//         <Stack.Navigator
+//           initialRouteName="SignUpScreen"
+//           screenOptions={{ headerBackTitle: "" }}
+//         >
+//           <Stack.Screen
+//             name="SignUpScreen"
+//             component={SignUpScreen}
+//             options={{ headerShown: false }}
+//           />
+//           <Stack.Screen
+//             name="ProfileScreen"
+//             component={ProfileScreen}
+//             options={{ headerTitle: "Editar Perfil" }}
+//           />
+//           <Stack.Screen
+//             name="ChooseTemplate"
+//             component={ChooseTemplateScreen}
+//             options={{ headerTitle: "Escolha o template" }}
+//           />
+//           <Stack.Screen name="PropertyForm" component={PropertyFormScreen} />
+//           <Stack.Screen name="PreviewScreen" component={PreviewScreen} />
+//           <Stack.Screen name="SoldOutDays" component={SoldOutDaysScreen} />
+//           <Stack.Screen name="Quadrant" component={QuadrantScreen} />
+//           <Stack.Screen name="QuadrantSquare" component={QuadrantSquareScreen} />
+//           <Stack.Screen name="ThreeMainImage" component={ThreeMainImageScreen} />
+//           <Stack.Screen name="RenderTemplate" component={RenderTemplateScreen} />
+//         </Stack.Navigator>
+//       </NavigationContainer>
+
+//       {/* Toast precisa estar FORA do NavigationContainer */}
+//       <Toast />
+//     </>
+//   );
+// }
+
+
 export default function App() {
   return (
+    <>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SignUpScreen" screenOptions={{ headerBackTitle: "" }}>
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerShown: false }} />
@@ -35,6 +77,8 @@ export default function App() {
         <Stack.Screen name="RenderTemplate" component={RenderTemplateScreen} options={{ headerTitle: "" }} />
       </Stack.Navigator>
     </NavigationContainer>
+    <Toast />
+    </>
   );
 }
 

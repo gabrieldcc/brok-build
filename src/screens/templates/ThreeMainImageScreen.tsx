@@ -150,7 +150,7 @@ export default function ThreeMainImageScreen({ navigation }) {
 
         {/* Abaixo das imagens: preço à esquerda + dados do imóvel à direita */}
         <View style={styles.bottomInfoRow}>
-          <Text style={styles.priceText}>R$ {formData.valor}</Text>
+          <Text style={styles.priceText}>{formData.valor}</Text>
           <Text style={styles.customText}>{formData.textoCustomizado}</Text>
         </View>
 
@@ -161,7 +161,7 @@ export default function ThreeMainImageScreen({ navigation }) {
           )}
           <View style={styles.userInfo}>
             <Text style={styles.userName}>{nome}</Text>
-            <Text style={styles.userCreci}>CRECI {creci}</Text>
+            <Text style={styles.userCreci}>CRECI: {creci}</Text>
             <Text style={styles.userCreci}>{celular}</Text>
           </View>
           {/* Logo no canto inferior direito */}
@@ -220,9 +220,7 @@ const styles = StyleSheet.create({
   },
   imagesRow: {
     flexDirection: 'row',
-    // flex: 1,
     height: '65%',
-    marginTop: 16
   },
   imageMain: {
     flex: 2,
@@ -243,12 +241,12 @@ const styles = StyleSheet.create({
   },
   bottomInfoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     paddingHorizontal: 5,
     marginTop: 5,
   },
   priceText: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'serif',
     fontWeight: '400',
     letterSpacing: 1.5,
@@ -281,17 +279,19 @@ const styles = StyleSheet.create({
   userInfo: {
     flex: 1,
     marginLeft: 10,
+    marginTop: 6
   },
   userName: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '400',
     color: '#192847'
   },
   userCreci: {
     fontSize: 12,
     marginTop: 3,
     fontWeight: '300',
-    color: '#555'
+    color: '#555',
+    marginTop: 1
   },
   logoBottom: {
     width: 40,

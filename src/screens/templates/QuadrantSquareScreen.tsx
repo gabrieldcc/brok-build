@@ -139,7 +139,7 @@ export default function QuadrantScreen({navigation}) {
                             <Ionicons name="location-outline" size={16} color="#192847" />
                             <Text style={styles.locationText}>{formData.bairro}</Text>
                         </View>
-                        <Text style={styles.priceText}>R$ {formData.valor}</Text>
+                        <Text style={styles.priceText}>{formData.valor}</Text>
                     </View>
 
                     {/* 2º quadrado */}
@@ -170,7 +170,7 @@ export default function QuadrantScreen({navigation}) {
                 {/* dados do usuário */}
                 <View style={styles.userInfo}>
                     <Text style={styles.userName}>{nome}</Text>
-                    <Text style={styles.userCreci}>CRECI {creci}</Text>
+                    <Text style={styles.userCreci}>CRECI: {creci}</Text>
                     <Text style={styles.userCreci}>{celular}</Text>
                 </View>
 
@@ -263,15 +263,17 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 20,
         width: '100%',
+        left: 20
     },
     userName: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#192847'
+        fontSize: 13,
+        fontWeight: '400',
+        textTransform: 'uppercase',
+        color: '#192847',
     },
     userCreci: {
-        fontSize: 14,
-        color: '#555'
+        fontSize: 12,
+        color: '#555',
     },
     profilePic: {
         position: 'absolute',
