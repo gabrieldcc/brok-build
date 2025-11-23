@@ -65,10 +65,14 @@ export default function SelectImagesScreen() {
   };
 
   // Navegar para a tela de montagem do template
+  // const goToSecondScreen = () => {
+  //   const imageArray = [mainImage, smallImageOne, smallImageTwo, smallImageThree];
+  //   navigation.navigate("RenderTemplate", {images: imageArray, profilePic });
+  // };
+
   const goToSecondScreen = () => {
     const imageArray = [mainImage, smallImageOne, smallImageTwo, smallImageThree];
-    console.log(`Número de imagens na lista -------------------- ${imageArray.length}`)
-    navigation.navigate("RenderTemplate", {images: imageArray, profilePic });
+    navigation.navigate("ChooseTemplate", {images: imageArray, profilePic });
   };
 
   return (
@@ -127,7 +131,7 @@ export default function SelectImagesScreen() {
       </View>
 
       <TouchableOpacity onPress={goToSecondScreen} style={styles.buttonGenerate}>
-        <Text style={styles.buttonText}>Gerar template</Text>
+        <Text style={styles.buttonText}>Escolher template</Text>
       </TouchableOpacity>
     </View>
   );
